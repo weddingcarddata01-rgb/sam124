@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Converter</title>
+    <script src="https://cdn.jsdelivr.net/npm/unicode-to-legacy-devanagari@1.0.0/dist/unicode-to-legacy.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0f2f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .converter-container {
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            width: 95%;
+            max-width: 900px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+        .text-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+        label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #34495e;
+            font-size: 1.1em;
+        }
+        textarea {
+            width: 100%;
+            height: 180px;
+            padding: 15px;
+            border: 1px solid #a7d9ed;
+            border-radius: 8px;
+            font-size: 1.1em;
+            resize: vertical;
+            box-sizing: border-box;
+            line-height: 1.5;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        textarea:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+        .controls-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .btn {
+            padding: 12px 28px;
+            font-size: 1.1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background-color: #28a745;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+        }
+        .btn-primary:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(40, 167, 69, 0.4);
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(108, 117, 125, 0.4);
+        }
+        .btn-swap {
+            background-color: #ffc107;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
+            font-size: 1em;
+            padding: 10px 20px;
+        }
+        .btn-swap:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 193, 7, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="converter-container">
+        <h1>Devanagari Font Converter</h1>
+        <div class="text-section">
+            <label for="inputText" id="inputLabel">Input (Normal Unicode Text):</label>
+            <textarea id="inputText" placeholder="Paste your text here..."></textarea>
+        </div>
+        
+        <div class="controls-section">
+            <select id="fontSelect">
+                <option value="krutiDev">Kruti Dev</option>
+                <option value="shreeDev">Shree Dev</option>
+            </select>
+            <button type="button" class="btn btn-primary" onclick="convertText()">Convert</button>
+            <button type="button" class="btn btn-swap" onclick="swapFields()">Swap</button>
+            <button type="button" class="btn btn-secondary" onclick="clearAll()">Clear</button>
+        </div>
+        
+        <div class="text-section">
+            <label for="outputText" id="outputLabel">Output (Shree Dev Text):</label>
+            <textarea id="outputText" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        let conversionMode = "unicodeToLegacy";
+
+        function convertText() {
+            const inputText = document.getElementById('inputText').value;
+            const selectedFont = document.getElementById('fontSelect').value;
+            const outputField = document.getElementById('outputText');
+            
+            let outputText = '';
+            if (conversionMode === "unicodeToLegacy") {
+                // Use the library's convert function
+                outputText = window.unicodeToLegacy(inputText, selectedFont);
+            } else {
+                // Use the library's reverse convert function
+                outputText = window.legacyToUnicode(inputText, selectedFont);
+            }
+            outputField.value = outputText;
+        }
+
+        function swapFields() {
+            const inputField = document.getElementById('inputText');
+            const outputField = document.getElementById('outputText');
+            const inputLabel = document.getElementById('inputLabel');
+            const outputLabel = document.getElementById('outputLabel');
+            const fontSelect = document.getElementById('fontSelect');
+            
+            const tempText = inputField.value;
+            inputField.value = outputField.value;
+            outputField.value = tempText;
+
+            const selectedFontName = fontSelect.options[fontSelect.selectedIndex].textContent;
+
+            if (conversionMode === "unicodeToLegacy") {
+                conversionMode = "legacyToUnicode";
+                inputLabel.textContent = `Input (${selectedFontName} Text):`;
+                outputLabel.textContent = "Output (Normal Unicode Text):";
+            } else {
+                conversionMode = "unicodeToLegacy";
+                inputLabel.textContent = "Input (Normal Unicode Text):";
+                outputLabel.textContent = `Output (${selectedFontName} Text):`;
+            }
+            convertText();
+        }
+
+        function clearAll() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('outputText').value = '';
+        }
+
+        window.onload = function() {
+            clearAll(); 
+            document.getElementById('fontSelect').addEventListener('change', convertText);
+        };
+    </script>
+</body>
+</html>
