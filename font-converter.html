@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Converter</title>
+    <!-- Placeholder for font conversion library - will implement custom conversion -->
+    <script>
+        // Fallback implementation for font conversion
+        // This will be implemented in the main script section
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0f2f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .converter-container {
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            width: 95%;
+            max-width: 900px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+        .text-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+        label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #34495e;
+            font-size: 1.1em;
+        }
+        textarea {
+            width: 100%;
+            height: 180px;
+            padding: 15px;
+            border: 1px solid #a7d9ed;
+            border-radius: 8px;
+            font-size: 1.1em;
+            resize: vertical;
+            box-sizing: border-box;
+            line-height: 1.5;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        textarea:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+        .controls-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .btn {
+            padding: 12px 28px;
+            font-size: 1.1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background-color: #28a745;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+        }
+        .btn-primary:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(40, 167, 69, 0.4);
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(108, 117, 125, 0.4);
+        }
+        .btn-swap {
+            background-color: #ffc107;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
+            font-size: 1em;
+            padding: 10px 20px;
+        }
+        .btn-swap:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 193, 7, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="converter-container">
+        <h1>Devanagari Font Converter</h1>
+        <div class="text-section">
+            <label for="inputText" id="inputLabel">Input (Normal Unicode Text):</label>
+            <textarea id="inputText" placeholder="Paste your text here..."></textarea>
+        </div>
+        
+        <div class="controls-section">
+            <select id="fontSelect">
+                <option value="krutiDev">Kruti Dev</option>
+                <option value="shreeDev">Shree Dev</option>
+            </select>
+            <button type="button" class="btn btn-primary" onclick="convertText()">Convert</button>
+            <button type="button" class="btn btn-swap" onclick="swapFields()">Swap</button>
+            <button type="button" class="btn btn-secondary" onclick="clearAll()">Clear</button>
+        </div>
+        
+        <div class="text-section">
+            <label for="outputText" id="outputLabel">Output (Shree Dev Text):</label>
+            <textarea id="outputText" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        let conversionMode = "unicodeToLegacy";
+
+        // Basic conversion mappings for demonstration
+        // These are simplified mappings - a full implementation would have comprehensive character mappings
+        const krutiDevMappings = {
+            // Basic Devanagari to Kruti Dev mappings (partial implementation)
+            'क': 'd',
+            'ख': 'ā',
+            'ग': 'x',
+            'घ': 'T',
+            'ङ': 'D',
+            'च': 'p',
+            'छ': 'N',
+            'ज': 't',
+            'झ': 'w',
+            'ञ': '¥',
+            'ट': 'V',
+            'ठ': 'B',
+            'ड': 'M',
+            'ढ': '<',
+            'ण': '.k',
+            'त': 'r',
+            'थ': 'F',
+            'द': 'n',
+            'ध': 'u',
+            'न': 'Uk',
+            'प': 'i',
+            'फ': 'Q',
+            'ब': 'c',
+            'भ': 'Hk',
+            'म': 'e',
+            'य': 'o',
+            'र': 'j',
+            'ल': 'y',
+            'व': 'G',
+            'श': 'Z',
+            'ष': 'Kk',
+            'स': 'l',
+            'ह': 'g',
+            // Vowels
+            'अ': 'v',
+            'आ': 'vk',
+            'इ': 'Øã',
+            'ई': 'bZ',
+            'उ': 'Ø',
+            'ऊ': 'Ø',
+            'ए': 'S',
+            'ऐ': 'S',
+            'ओ': 'v®',
+            'औ': 'v®',
+            // Matras
+            'ा': 'k',
+            'ि': 'ã',
+            'ी': 'h',
+            'ु': 'q',
+            'ू': 'w',
+            'े': 's',
+            'ै': 'S',
+            'ो': '®',
+            'ौ': '®'
+        };
+
+        const shreeDevMappings = {
+            // Basic Devanagari to Shree Dev mappings (partial implementation)
+            'क': 'sj',
+            'ख': 'v',
+            'ग': 'u',
+            'घ': 'O',
+            'ङ': 'L',
+            'च': 'r',
+            'छ': 'R',
+            'ज': 'Hf',
+            'झ': 'Ps',
+            'ञ': 'Ë',
+            'ट': 'ª',
+            'ठ': 'Í',
+            'ड': '¬',
+            'ढ': 'Ï',
+            'ण': '¯',
+            'त': 'Aj',
+            'थ': 'yj',
+            'द': 'bj',
+            'ध': 'wj',
+            'न': 'Gj',
+            'प': 'kj',
+            'फ': 'ˆj',
+            'ब': 'aj',
+            'भ': 'Yj',
+            'म': 'hj',
+            'य': 'oj',
+            'र': 'vj',
+            'ल': 'nj',
+            'व': 'cj',
+            'श': 'æj',
+            'ष': 'qj',
+            'स': 'xj',
+            'ह': 'gj',
+            // Additional mappings would go here
+        };
+
+        function convertUnicodeToLegacy(text, fontType) {
+            if (!text) return '';
+            
+            let mappings;
+            if (fontType === 'krutiDev') {
+                mappings = krutiDevMappings;
+            } else if (fontType === 'shreeDev') {
+                mappings = shreeDevMappings;
+            } else {
+                return text; // No conversion if font type not supported
+            }
+
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                result += mappings[char] || char;
+            }
+            return result;
+        }
+
+        function convertLegacyToUnicode(text, fontType) {
+            if (!text) return '';
+            
+            let mappings;
+            if (fontType === 'krutiDev') {
+                mappings = krutiDevMappings;
+            } else if (fontType === 'shreeDev') {
+                mappings = shreeDevMappings;
+            } else {
+                return text;
+            }
+
+            // Create reverse mapping
+            const reverseMappings = {};
+            for (const [unicode, legacy] of Object.entries(mappings)) {
+                reverseMappings[legacy] = unicode;
+            }
+
+            let result = '';
+            let i = 0;
+            while (i < text.length) {
+                let found = false;
+                // Try to match longer sequences first
+                for (let len = 3; len >= 1; len--) {
+                    const substr = text.substr(i, len);
+                    if (reverseMappings[substr]) {
+                        result += reverseMappings[substr];
+                        i += len;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    result += text[i];
+                    i++;
+                }
+            }
+            return result;
+        }
+
+        function convertText() {
+            const inputText = document.getElementById('inputText').value;
+            const selectedFont = document.getElementById('fontSelect').value;
+            const outputField = document.getElementById('outputText');
+            
+            try {
+                let outputText = '';
+                if (conversionMode === "unicodeToLegacy") {
+                    outputText = convertUnicodeToLegacy(inputText, selectedFont);
+                } else {
+                    outputText = convertLegacyToUnicode(inputText, selectedFont);
+                }
+                outputField.value = outputText;
+            } catch (error) {
+                console.error('Conversion error:', error);
+                outputField.value = 'Error: Could not convert text. Please check your input.';
+            }
+        }
+
+        function swapFields() {
+            const inputField = document.getElementById('inputText');
+            const outputField = document.getElementById('outputText');
+            const inputLabel = document.getElementById('inputLabel');
+            const outputLabel = document.getElementById('outputLabel');
+            const fontSelect = document.getElementById('fontSelect');
+            
+            const tempText = inputField.value;
+            inputField.value = outputField.value;
+            outputField.value = tempText;
+
+            const selectedFontName = fontSelect.options[fontSelect.selectedIndex].textContent;
+
+            if (conversionMode === "unicodeToLegacy") {
+                conversionMode = "legacyToUnicode";
+                inputLabel.textContent = `Input (${selectedFontName} Text):`;
+                outputLabel.textContent = "Output (Normal Unicode Text):";
+            } else {
+                conversionMode = "unicodeToLegacy";
+                inputLabel.textContent = "Input (Normal Unicode Text):";
+                outputLabel.textContent = `Output (${selectedFontName} Text):`;
+            }
+            
+            // Update labels immediately and convert
+            updateLabels();
+            if (inputField.value.trim()) {
+                convertText();
+            }
+        }
+
+        function updateLabels() {
+            const inputLabel = document.getElementById('inputLabel');
+            const outputLabel = document.getElementById('outputLabel');
+            const fontSelect = document.getElementById('fontSelect');
+            const selectedFontName = fontSelect.options[fontSelect.selectedIndex].textContent;
+
+            if (conversionMode === "unicodeToLegacy") {
+                inputLabel.textContent = "Input (Normal Unicode Text):";
+                outputLabel.textContent = `Output (${selectedFontName} Text):`;
+            } else {
+                inputLabel.textContent = `Input (${selectedFontName} Text):`;
+                outputLabel.textContent = "Output (Normal Unicode Text):";
+            }
+        }
+
+        function clearAll() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('outputText').value = '';
+        }
+
+        window.onload = function() {
+            clearAll(); 
+            updateLabels();
+            
+            // Add event listeners
+            document.getElementById('fontSelect').addEventListener('change', function() {
+                updateLabels();
+                const inputText = document.getElementById('inputText').value;
+                if (inputText.trim()) {
+                    convertText();
+                }
+            });
+
+            // Auto-convert on input change with debouncing
+            let timeoutId;
+            document.getElementById('inputText').addEventListener('input', function() {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(convertText, 300); // 300ms debounce
+            });
+        };
+    </script>
+</body>
+</html>
