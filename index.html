@@ -140,19 +140,48 @@
 
     <script>
         let conversionMode = "unicodeToLegacy";
+        // Map dropdown values to the exact font names expected by the conversion library
+        const FONT_NAME_MAP = {
+            krutiDev: "Krutidev10",      // library expects this exact name
+            shreeDev: "ShreeDev0714"     // library expects this exact name
+        };
 
         function convertText() {
             const inputText = document.getElementById('inputText').value;
-            const selectedFont = document.getElementById('fontSelect').value;
+            const selectedFontKey = document.getElementById('fontSelect').value;
+            const selectedFont = FONT_NAME_MAP[selectedFontKey];
+            if (!selectedFont) {
+                alert("Unsupported font selected. Please choose a supported option.");
+                return;
+            }
             const outputField = document.getElementById('outputText');
             
             let outputText = '';
             if (conversionMode === "unicodeToLegacy") {
                 // Use the library's convert function
-                outputText = window.unicodeToLegacy(inputText, selectedFont);
+                if (typeof window.unicodeToLegacy === "function") {
+                    outputText = window.unicodeToLegacy(inputText, selectedFont);
+                } else if (typeof window.unidev === "function") {
+                    // Fallback for the 'unidev' library API
+                    outputText = window.unidev(inputText, "hindi", selectedFont);
+                } else {
+                    console.error("Conversion library not found. Make sure the script is loaded correctly.");
+                    alert("Conversion library failed to load. Check your internet connection or CDN link.");
+                    return;
+                }
             } else {
                 // Use the library's reverse convert function
-                outputText = window.legacyToUnicode(inputText, selectedFont);
+                if (typeof window.legacyToUnicode === "function") {
+                    outputText = window.legacyToUnicode(inputText, selectedFont);
+                } else if (typeof window.unidev === "function") {
+                    // 'unidev' library doesn't expose reverse conversion; warn user
+                    alert("Reverse conversion is not supported with the current library.");
+                    return;
+                } else {
+                    console.error("Conversion library not found. Make sure the script is loaded correctly.");
+                    alert("Conversion library failed to load. Check your internet connection or CDN link.");
+                    return;
+                }
             }
             outputField.value = outputText;
         }
